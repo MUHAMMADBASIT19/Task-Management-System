@@ -10,3 +10,20 @@ type nul > server.js;
 type nul > .gitignore
 
 New-Item -ItemType File .env, server.js, .gitignore -Force
+
+
+npx create-vite@latest frontend --template react
+
+
+# Navigate to your project folder
+cd "c:\Users\SarmadSajjad\Documents\GitHub\Task-Management-System\"
+
+# Initialize the frontend project (just press Enter to accept defaults)
+npx create-vite@latest frontend --template react
+
+# Go into the frontend folder and install dependencies
+cd frontend
+npm install
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+npm install axios lucide-react react-router-dom framer-motion date-fns
