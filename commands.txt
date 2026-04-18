@@ -1,0 +1,12 @@
+mkdir backend; 
+cd backend; 
+npm init -y; 
+npm install express mongoose dotenv cors joi jsonwebtoken bcryptjs; 
+npm install --save-dev nodemon jest supertest
+
+mkdir models controllers routes middleware config; 
+type nul > .env; 
+type nul > server.js; 
+type nul > .gitignore
+
+New-Item -ItemType File .env, server.js, .gitignore -Force
