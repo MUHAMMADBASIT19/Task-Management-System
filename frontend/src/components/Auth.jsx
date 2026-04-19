@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, ArrowRight, Loader2, Target } from 'lucide-react';
 import { login, register } from '../services/api';
 
 const Auth = ({ onAuthSuccess }) => {
@@ -32,98 +32,128 @@ const Auth = ({ onAuthSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] p-6">
-      <div className="glass w-full max-w-md rounded-3xl p-8 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-500">
-        <div className="text-center mb-8">
-          <div className="bg-primary-600 w-12 h-12 rounded-xl flex items-center justify-center text-white mx-auto mb-4 shadow-lg shadow-primary-200">
-            <Lock size={24} />
+    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-6 sm:p-0">
+      {/* The Block */}
+      <div className="bg-white w-full max-w-4xl min-h-[600px] flex rounded-[32px] overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in duration-500">
+        
+        {/* Left Side: Branding/Intro (Desktop only) */}
+        <div className="hidden md:flex flex-1 bg-indigo-600 p-12 flex-col justify-between text-white relative overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-500 rounded-full blur-[100px] opacity-40"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-10">
+              <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+                <Target size={28} />
+              </div>
+              <h1 className="text-2xl font-black tracking-tighter">TaskFlow</h1>
+            </div>
+            
+            <h2 className="text-4xl font-black leading-tight mb-6">
+              Master your day, one task at a time.
+            </h2>
+            <p className="text-indigo-100 font-medium text-lg max-w-[300px]">
+              Effortless task management designed for high-performance interns.
+            </p>
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
-            {isLogin ? 'Welcome Back' : 'Create Account'}
-          </h2>
-          <p className="text-gray-500 mt-2">
-            {isLogin ? 'Manage your tasks with ease' : 'Start organizing your life today'}
-          </p>
+
+          <div className="relative z-10 pt-10 border-t border-indigo-500/50">
+            <p className="text-sm font-bold text-indigo-200 uppercase tracking-widest">
+              &copy; 2026 Professional Edition
+            </p>
+          </div>
         </div>
 
-        {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium mb-6 animate-in slide-in-from-top-2">
-            {error}
+        {/* Right Side: Form */}
+        <div className="flex-[1.2] p-8 sm:p-16 flex flex-col justify-center">
+          <div className="mb-10 text-center md:text-left">
+            <h2 className="text-3xl font-black text-slate-800">
+              {isLogin ? 'Sign In' : 'Get Started'}
+            </h2>
+            <p className="text-slate-500 font-medium mt-2">
+              {isLogin ? 'Enter your details to access your workspace' : 'Create your free account today'}
+            </p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">Name</label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="text"
-                  required
-                  placeholder="John Doe"
-                  className="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                />
-              </div>
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg text-sm font-bold mb-8 animate-in slide-in-from-top-2">
+              {error}
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
-                type="email"
-                required
-                placeholder="john@example.com"
-                className="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
-                type="password"
-                required
-                placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary-200 transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {loading ? <Loader2 className="animate-spin" size={20} /> : (
-              <>
-                {isLogin ? 'Sign In' : 'Create Account'}
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {!isLogin && (
+              <div className="space-y-2">
+                <label className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400 ml-1">Full Name</label>
+                <div className="relative">
+                  <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type="text"
+                    required
+                    placeholder="E.g. John Doe"
+                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-indigo-600 outline-none transition-all placeholder:text-slate-300 font-semibold"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  />
+                </div>
+              </div>
             )}
-          </button>
-        </form>
 
-        <div className="mt-8 text-center pt-6 border-t border-gray-100">
-          <p className="text-gray-500 text-sm">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
+            <div className="space-y-2">
+              <label className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400 ml-1">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <input
+                  type="email"
+                  required
+                  placeholder="name@company.com"
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-indigo-600 outline-none transition-all placeholder:text-slate-300 font-semibold"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400 ml-1">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-indigo-600 outline-none transition-all placeholder:text-slate-300 font-semibold"
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                />
+              </div>
+            </div>
+
             <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary-600 font-bold hover:underline"
+              type="submit"
+              disabled={loading}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-indigo-100 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 group disabled:opacity-70"
             >
-              {isLogin ? 'Sign Up' : 'Sign In'}
+              {loading ? <Loader2 className="animate-spin" size={20} /> : (
+                <>
+                  <span>{isLogin ? 'Login Now' : 'Register Account'}</span>
+                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
-          </p>
+          </form>
+
+          <div className="mt-10 text-center pt-8 border-t border-slate-50">
+            <p className="text-slate-400 font-bold text-sm">
+              {isLogin ? "No account?" : "Have an account?"}{' '}
+              <button
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-indigo-600 font-black hover:text-indigo-700 transition-colors"
+                type="button"
+              >
+                {isLogin ? 'Sign up here' : 'Login here'}
+              </button>
+            </p>
+          </div>
         </div>
       </div>
     </div>
