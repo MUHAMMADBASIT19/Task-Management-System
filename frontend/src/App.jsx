@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Search, Filter, LayoutDashboard, CheckSquare, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Search, LayoutDashboard, CheckSquare, Clock, AlertCircle, LogOut, User as UserIcon } from 'lucide-react';
 import { getTasks, createTask, updateTask, deleteTask } from './services/api';
 import TaskCard from './components/TaskCard';
 import TaskForm from './components/TaskForm';
+import Auth from './components/Auth';
 
 function App() {
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -13,8 +15,10 @@ function App() {
   const [filterStatus, setFilterStatus] = useState('All');
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (user) {
+      fetchTasks();
+    }
+  }, [user]);
 
   const fetchTasks = async () => {
     try {
@@ -23,8 +27,17 @@ function App() {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching tasks:', error);
+      if (error.response?.status === 401) {
+        handleLogout();
+      }
       setLoading(false);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    setTasks([]);
   };
 
   const handleCreateOrUpdate = async (formData) => {
@@ -69,20 +82,36 @@ function App() {
     return { total, completed, progress };
   }, [tasks]);
 
+  if (!user) {
+    return <Auth onAuthSuccess={(userData) => setUser(userData)} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] pb-20">
       {/* Header & Dashboard */}
       <nav className="glass sticky top-0 z-40 px-6 py-4 mb-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary-600 p-2 rounded-xl text-white">
-              <LayoutDashboard size={24} />
+          <div className="flex items-center justify-between w-full md:w-auto">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary-600 p-2 rounded-xl text-white">
+                <LayoutDashboard size={24} />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-800 tracking-tight">TaskFlow</h1>
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 tracking-tight">TaskFlow</h1>
+            
+            <div className="flex md:hidden items-center gap-4">
+              <button 
+                onClick={handleLogout}
+                className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                title="Logout"
+              >
+                <LogOut size={20} />
+              </button>
+            </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="relative">
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <div className="relative flex-grow md:flex-grow-0">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input 
                 type="text"
@@ -99,6 +128,20 @@ function App() {
               <Plus size={20} />
               <span className="hidden md:inline">New Task</span>
             </button>
+            
+            <div className="hidden md:flex items-center gap-4 pl-4 border-l border-gray-200">
+              <div className="flex items-center gap-2 text-gray-700 font-medium">
+                <div className="bg-gray-100 p-2 rounded-full"><UserIcon size={18} /></div>
+                <span className="max-w-[100px] truncate">{user.name}</span>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                title="Logout"
+              >
+                <LogOut size={20} />
+              </button>
+            </div>
           </div>
         </div>
       </nav>
