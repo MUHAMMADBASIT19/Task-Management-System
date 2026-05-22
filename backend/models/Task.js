@@ -4,8 +4,19 @@ const taskSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Will be used when we add Auth in Week 3
+      ref: 'User',
     },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    sharedWith: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     title: {
       type: String,
       required: [true, 'Please add a title'],
@@ -25,6 +36,15 @@ const taskSchema = mongoose.Schema(
       type: Date,
       required: [true, 'Please add a due date'],
     },
+    attachments: [
+      {
+        filename: { type: String, required: true },
+        path: { type: String, required: true },
+        mimetype: { type: String, required: true },
+        size: { type: Number, required: true },
+        uploadedAt: { type: Date, default: Date.now }
+      }
+    ]
   },
   {
     timestamps: true,

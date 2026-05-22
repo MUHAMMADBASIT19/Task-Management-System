@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/tasks';
+const API_BASE = 'http://localhost:5000/api';
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_BASE,
 });
 
 // Add a request interceptor to include the JWT token in headers
@@ -19,14 +19,32 @@ api.interceptors.request.use(
 );
 
 // Auth services
-export const login = (userData) => axios.post('http://localhost:5000/api/users/login', userData);
-export const register = (userData) => axios.post('http://localhost:5000/api/users', userData);
+export const login = (userData) => axios.post(`${API_BASE}/users/login`, userData);
+export const register = (userData) => axios.post(`${API_BASE}/users`, userData);
 
 // Task services
-export const getTasks = () => api.get('/');
-export const getTask = (id) => api.get(`/${id}`);
-export const createTask = (taskData) => api.post('/', taskData);
-export const updateTask = (id, taskData) => api.put(`/${id}`, taskData);
-export const deleteTask = (id) => api.delete(`/${id}`);
+export const getTasks = () => api.get('/tasks');
+export const getSharedTasks = () => api.get('/tasks/shared');
+export const getTask = (id) => api.get(`/tasks/${id}`);
+export const createTask = (taskData) => api.post('/tasks', taskData);
+export const updateTask = (id, taskData) => api.put(`/tasks/${id}`, taskData);
+export const deleteTask = (id) => api.delete(`/tasks/${id}`);
+export const shareTask = (id, email) => api.put(`/tasks/${id}/share`, { email });
+
+// Attachments services
+export const uploadAttachment = (id, formData) => api.post(`/tasks/${id}/attachments`, formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
+export const deleteAttachment = (id, attachmentId) => api.delete(`/tasks/${id}/attachments/${attachmentId}`);
+
+// Notifications services
+export const getNotifications = () => api.get('/notifications');
+export const markNotificationAsRead = (id) => api.put(`/notifications/${id}/read`);
+
+// Analytics services
+export const getAnalyticsOverview = () => api.get('/analytics/overview');
+export const getAnalyticsTrends = () => api.get('/analytics/trends');
 
 export default api;
